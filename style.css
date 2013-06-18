@@ -50,3 +50,16 @@
 .cursor {
 	background-color: blue;
 }
+
+.manifesto p {
+	text-indent: 4em;
+	line-height:1.4em;
+	margin: 0 2em;
+	font-size:1.1em;
+}
+.manifesto h1 {
+	text-align:center;
+	font-size: 2em;
+	font-family: "futura-pt";
+	text-transform: uppercase;
+}
