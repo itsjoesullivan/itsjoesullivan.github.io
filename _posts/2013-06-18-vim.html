@@ -1,0 +1,30 @@
+---
+layout: default
+title: vim
+category: project
+---
+		<pre id="vim">js-vim is already a fairly robust ViM implementation in javascript:
+
+	- Motions ( 3fs, /foo, N2 )
+	- Major operators ( y, d, c ) 
+	- Registers ( "a )
+	- Macros ( qa{macro}q, @a )
+
+Its scope is to satisfy ViM users on the web.
+
+//TODO</pre>
+		<script>
+var el = document.getElementById('vim'),
+			text = el.innerHTML;
+			el.innerHTML = '';
+
+		vim.edit({
+			el: document.getElementById('vim')
+		});
+
+		vim.text(text);
+
+		vim.exec('G')
+		vim.exec('$')
+		</script>
+
