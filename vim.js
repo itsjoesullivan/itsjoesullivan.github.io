@@ -14,19 +14,6 @@ var View = module.exports = function(obj) {
 };
 
 
-var style = {
-	width: '100%',
-	height: '100%',
-	'background-color': '#111',
-	'color': '#eee',
-	'border-radius':'inherit',
-	'padding': '15px 5px 0px 5px',
-	'font-family':'courier',
-	'margin':'none'
-};
-
-
-
 View.prototype.getDimensions = function() {
 	var character = document.createElement('span');
 	character.innerHTML = 'a';
@@ -53,11 +40,8 @@ View.prototype.getDimensions = function() {
 View.prototype.setup = function() {
 
 	var pre = document.createElement('pre');
+	pre.className = 'vim-container';
 
-	//Simple styling... a stylesheet solution is much better than this.
-	for(var i in style) {
-		pre.style[i] = style[i];
-	}
 	this.pre = pre;
 
 	this.el.appendChild(pre);
@@ -218,6 +202,8 @@ var Vim = require('js-vim'),
 	View = require('./lib/view'),
 	Keys = require('./lib/keys');
 
+require('./lib/style');
+
 /* set up */
 var init = function(obj) {
 
@@ -226,11 +212,22 @@ var init = function(obj) {
 
 	//Hmm.
 	vim.edit = function(obj) {
+		if(!obj || typeof obj !== 'object' || !('el' in obj)) throw "vim.edit required { el: <HTMLElement> }";
+		var text = obj.el.innerHTML;
+		obj.el.innerHTML = '';
 		vim.view = new View({
 			el: obj.el,
 			vim: vim
 		});
+		if(text.length) {
+			vim.curDoc.text(text);
+			vim.exec('G')
+			vim.exec('$')
+		}
+	
 	};
+
+	
 
 	//Set up keys
 	keys = new Keys();
@@ -246,7 +243,22 @@ var init = function(obj) {
 
 init();	
 
-},{"./lib/view":1,"./lib/keys":3,"js-vim":4}],3:[function(require,module,exports){
+},{"./lib/view":1,"./lib/keys":3,"./lib/style":4,"js-vim":5}],4:[function(require,module,exports){
+(function() {
+	var style = document.createElement('style');
+	var text = require('../style.css');
+	style.setAttribute("type", "text/css");
+	if (style.styleSheet) {   // for IE
+		style.styleSheet.cssText = text;
+	} else {                // others
+		var textnode = document.createTextNode(text);
+		style.appendChild(textnode);
+	}
+	var h = document.getElementsByTagName('head')[0];
+	h.appendChild(style);
+})();
+
+},{"../style.css":6}],3:[function(require,module,exports){
 mousetrap = require('../components/component-mousetrap');
 /** Simple way to listen to keystrokes
 
@@ -302,7 +314,7 @@ Keys.prototype.listen = function(obj) {
 		if(key.toLowerCase() in specialChars) {
 			e.preventDefault();
 			key = specialChars[key];
-			if(!key.length) return;
+			if(!key || !key.length) return;
 		}
 		this.fn(key);
 	}.bind(this));
@@ -311,10 +323,13 @@ Keys.prototype.listen = function(obj) {
 
 
 
-},{"../components/component-mousetrap":5}],4:[function(require,module,exports){
+},{"../components/component-mousetrap":7}],6:[function(require,module,exports){
+module.exports = '.vim-container{margin:0;padding:0;position:relative;height:100%;width:100%;border-radius:4px;color:#f4f4f4;background-color:#111;font-size:12px}.vim-container pre,.vim-container span{font-size:inherit}.vim-container .selection{background-color:#555}.vim-container .selection.cursor{background-color:#888;color:#333}.vim-container .gutter{color:#ca792d;font-weight:700}.vim-container .blank{color:#4a39de;font-weight:700}.vim-container .var{color:#c0bb31}';
+
+},{}],5:[function(require,module,exports){
 module.exports = require('./lib/Vim');
 
-},{"./lib/Vim":6}],5:[function(require,module,exports){
+},{"./lib/Vim":8}],7:[function(require,module,exports){
 /**
  * Copyright 2012 Craig Campbell
  *
@@ -1120,7 +1135,7 @@ module.exports.characterFromEvent = _characterFromEvent;
 module.exports.SHIFT_MAP = _SHIFT_MAP;
 
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 module.exports = function() {};
 
 /** 
@@ -1179,7 +1194,7 @@ module.exports.prototype.trigger = function(name, arg1, arg2 /** ... */) {
   return this;
 
 };
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 module.exports = {
 
 	/* Any time you receive multiple keys in one go */
@@ -1220,7 +1235,7 @@ module.exports = {
 
 };
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 module.exports = {
 	'/(.*)\n/': function(keys,vim,res) {
 		vim.searchBuffer = res[1];
@@ -1230,7 +1245,7 @@ module.exports = {
 	}
 };
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /*
 
 	Visual mode is just text selection on top of command mode. Each keypress, simply maintain your range.
@@ -1241,7 +1256,7 @@ var rangeStart,
 		originalCursorPosition = false;
 module.exports = {
 
-	'/^((?![0-9])(?!esc|x|d|y|i|a|J|c|>).*[^0-9]+.*)/': function(keys,vim, res) {
+	'/^((?![1-9])(?!esc|x|d|y|i|a|J|c|>).*[^1-9]+.*)/': function(keys,vim, res) {
 		this.curDoc.selecting = true;
 
 		if(!originalCursorPosition) {
@@ -1456,20 +1471,20 @@ module.exports = {
 
 
 	'/^(J)$/': function(keys, vim) {
-		var range = vim.curDoc.selection();
+		var range = this.curDoc.selection();
 		var ct = range[1].line - range[0].line || 1; //do first join ANYWAYS
 
 		//Move to the beginning
-		vim.curDoc.cursor.line(range[0].line);
-		vim.exec('esc');
+		this.curDoc.cursor.line(range[0].line);
+		this.exec('esc');
 		while(ct--) {
-			vim.exec('J');
+			this.exec('J');
 		}
 	}
 };
 
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 (function(){var Cursor = require('./Cursor');
 
 var Event = require('./Event');
@@ -1815,7 +1830,7 @@ function isRange(range) {
 module.exports = Doc;
 
 })()
-},{"./Cursor":12,"./Event":7}],6:[function(require,module,exports){
+},{"./Cursor":14,"./Event":9}],8:[function(require,module,exports){
 /* 
 
 	One vim
@@ -1846,10 +1861,20 @@ this.parser = new CommandParser();
 var dmpmod = require('diff_match_patch');
 this.dmp = new dmpmod.diff_match_patch();
 
+	//Hold docs
 	this.docs = [];
-	this.currentRegister = 0;
+
+	//Registry
 	this._numRegistry = [];
 	this._registry = {};
+	//Hm.
+	this.currentRegister = 0;
+
+	//Current depth of command execution. 
+		//0 is idle; 
+		//1 is a user-executed command; 
+		//below 1 is sub-commands resulting from the input
+	this.execDepth = 0;
 
 	//Create initial document
 	var doc = new Doc();
@@ -1862,14 +1887,12 @@ this.dmp = new dmpmod.diff_match_patch();
 	}.bind(this));
 	this.docs.push(doc);
 	this.curDoc = doc;
+	this.doc = this.curDoc; //I like this better than curDoc.
 
 	this.modes = {};
 
 	this.keyBuffer = '';
 
-	this.on('change:mode', function(mode) {
-
-	});
 
 	//Add modes
 	this.addMode('insert',require('./modes/insert'));
@@ -1877,14 +1900,15 @@ this.dmp = new dmpmod.diff_match_patch();
 	this.addMode('search',require('./modes/search'));
 	this.addMode('visual',require('./modes/visual'));
 
-	//Default to command
+	//Default to command mode
 	this.mode('command');
-
 
 };
 
+//Inherit Event, which yields on() and trigger()
 Vim.prototype = new Event();
 
+//Create a new doc. Not very semantic.
 Vim.prototype.new = function() {
 	var doc = new Doc();
 	doc.cursor.line(0);
@@ -1894,6 +1918,7 @@ Vim.prototype.new = function() {
 	this.exec('esc');
 };
 
+//Add a new mode
 Vim.prototype.addMode = function(name,mode) {
 
 	var modeArr = [];
@@ -1901,15 +1926,37 @@ Vim.prototype.addMode = function(name,mode) {
 	for(var i in mode) {
 		if(mode.hasOwnProperty(i)) {
 			var reg = new RegExp(i.substring(1,i.length-1));
-			modeArr.push({
-				command: reg,
+			this.addCommand({
+				mode: name,
+				match: reg,
 				fn: mode[i]
 			});
 		}
 	}
 
-	this.modes[name] = modeArr;
 };
+
+/** add a command to an existing mode
+
+	obj like {
+		mode: string,
+		match: regexp,
+		fn: function
+	}
+
+*/
+Vim.prototype.addCommand = function (obj) {
+	if(!obj || typeof obj !== 'object' || !obj.mode || !obj.match || !obj.fn) throw "Invalid argument";
+	
+	//Create mode if it doesn't yet exist
+	if(!(obj.mode in this.modes)) this.modes[obj.mode] = [];	
+
+	return this.modes[obj.mode].push({
+		command: obj.match,
+		fn: obj.fn
+	});
+
+}
 
 Vim.prototype.mode = function(name) {
 	if(name) {
@@ -1955,6 +2002,7 @@ Vim.prototype.register = function(k,v) {
 		return val ? val : '';
 	}
 };
+//TODO kill
 /** Get a register, following logic that usage sets the default to 0
 
 */
@@ -1966,8 +2014,6 @@ Vim.prototype.useRegister = function() {
 	return val;
 };
 
-//Keep track of call stack depth so we know when a command set ends
-var execDepth = 0;
 var _text = '';
 
 /** Execute a given command by passing it through 
@@ -1988,21 +2034,19 @@ Vim.prototype.exec = function(newCommand) {
 	}
 
 	//Increment the depth so we can identify top-level commands
-	execDepth++;
+	this.execDepth++;
 
 
 
 	//If this is top-level command, store the value of text for diffing to store the undo
 	//TODO: kill this
-	if(execDepth === 1) {
+	if(this.execDepth === 1) {
 		_text = this.text();	
 	}
 
 	//Keep a hold of what the position is
 	var startPos = this.curDoc.cursor.position();
 	
-	//Store it here... why not
-	this.execDepth = execDepth;
 
 	//Hold mode
 	var mode = this.mode();
@@ -2036,12 +2080,13 @@ Vim.prototype.exec = function(newCommand) {
 		}
 	});
 
+	//We will deal with this command.
 	if(handlers.length) {
-
-		if(this.recording && execDepth === 1 && command.indexOf('q') !== 0) {
+		//Do we record it?
+		if(this.recording && this.execDepth === 1 && command.indexOf('q') !== 0) {
 			this.recordingBuffer.push(command);
 		}
-
+		//Clear keyBuffer before fn runs, so that it can reset keyBuffer if it desires.
 		this.keyBuffer = '';
 		if(parsedCommand) {
 			handlers[0].fn.apply(this,parsedCommand.value);
@@ -2070,7 +2115,7 @@ Vim.prototype.exec = function(newCommand) {
 			the keybindings already understand.
 
 	*/
-	if(execDepth === 1) {
+	if(this.execDepth === 1) {
 		this.trigger('change:keyBuffer',command);
 		this.trigger('exec',command)
 		if(this.curDoc.cursor.moved) {
@@ -2097,21 +2142,13 @@ Vim.prototype.exec = function(newCommand) {
 		if(_text !== newText) {
 			this.curDoc.undo.add(this.dmp.patch_make(newText,_text))
 		};
-
 		//If bubbling up and we've stored some info (i.e. visual mode done)
 		if(this.curDoc.stored) {
 			this.exec('esc');	
 			this.curDoc.stored = false;
 		}
-
-		
 	}
-
-	execDepth--;
-
-	
-
-	//this.trigger('exec',command);
+	this.execDepth--;
 
 };
 
@@ -2139,7 +2176,7 @@ Vim.prototype.Doc = Doc;
 module.exports = Vim;
 
 
-},{"./Doc":11,"./Event":7,"./modes/insert":8,"./modes/command":13,"./modes/search":9,"./modes/visual":10,"underscore":14,"js-vim-command":15,"diff_match_patch":16}],14:[function(require,module,exports){
+},{"./Doc":13,"./Event":9,"./modes/insert":10,"./modes/command":15,"./modes/search":11,"./modes/visual":12,"underscore":16,"js-vim-command":17,"diff_match_patch":18}],16:[function(require,module,exports){
 (function(){//     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -3368,7 +3405,7 @@ module.exports = Vim;
 }).call(this);
 
 })()
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var Parser = function() {};
 
 /** Parse a command
@@ -3472,7 +3509,7 @@ Parser.prototype.getLastCount = function(command) {
 
 module.exports = Parser;
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 (function(){/**
  * Diff Match and Patch
  *
@@ -5617,7 +5654,7 @@ exports['DIFF_INSERT'] = DIFF_INSERT;
 exports['DIFF_EQUAL'] = DIFF_EQUAL;
 
 })()
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var Event = require('./Event');
 
 var Cursor = function(obj) {
@@ -5678,7 +5715,7 @@ Cursor.prototype.position = function() {
 
 module.exports = Cursor;
 
-},{"./Event":7}],13:[function(require,module,exports){
+},{"./Event":9}],15:[function(require,module,exports){
 var _ = require('underscore');
 
 module.exports = {
@@ -5688,6 +5725,7 @@ module.exports = {
 			this.exec(motion);
 		}
 	},
+
 
 /*	'/^{operator}{operator}$/': function(op1,op2) {
 		this.exec(op1 + op2);
@@ -5740,8 +5778,8 @@ module.exports = {
 
 
 	'/\g_/': function(keys,vim) {
-		vim.exec('$');
-		var doc = vim.curDoc;
+		this.exec('$');
+		var doc = this.curDoc;
 		var point = doc.find(/([\S])( |$)/g,{backwards:true}); //backwards
 		if(point) {
 			doc.cursor.line(point.line);
@@ -5750,7 +5788,7 @@ module.exports = {
 	},
 
 	'/^(b|B)/': function(keys,vim) {
-		var doc = vim.curDoc;
+		var doc = this.curDoc;
 		var point = doc.find(/(\S*)\s*(?=[\S]*)$/g,{ backwards: true });
 		if(point) {
 			doc.cursor.line(point.line);
@@ -5763,30 +5801,30 @@ module.exports = {
 
 
 	'/\\$/': function(keys,vim) {
-		var curLine = vim.curDoc.line();
+		var curLine = this.curDoc.line();
 
-		/*vim.exec('/'); //search mode
-		vim.exec('(.|\n)$'); //
-		vim.exec('\n'); //go!
-		vim.exec('/(.|\\n)$\n');*/
+		/*this.exec('/'); //search mode
+		this.exec('(.|\n)$'); //
+		this.exec('\n'); //go!
+		this.exec('/(.|\\n)$\n');*/
 
 		var cursorPos = 0;
 		if(curLine.length) {
-			cursorPos = curLine.length-1 + (vim.curDoc.selecting ? 1 : 0);
+			cursorPos = curLine.length-1 + (this.curDoc.selecting ? 1 : 0);
 		}
 
 
-		vim.cursor().char(cursorPos);
+		this.cursor().char(cursorPos);
 	},
 
 	/* go to beginning of line */
 	'/^0/': function(keys,vim) {
-		vim.cursor().char(0);
+		this.cursor().char(0);
 	},
 
 	/* go to next word */
 	'/^(w)$/': function(keys,vim) {
-		var doc = vim.curDoc;
+		var doc = this.curDoc;
 
 		var point;
 		if(this.curChar.match(/\w/)) {
@@ -5804,7 +5842,7 @@ module.exports = {
 
 	/* go to next WORD */
 	'/^(W)$/': function(keys,vim) {
-		var doc = vim.curDoc;
+		var doc = this.curDoc;
 		var point = doc.find(/(?: |\^)(\S+)/g);
 		if(point) { //there is a space, therefore a word
 			doc.cursor.line(point.line);
@@ -5815,7 +5853,7 @@ module.exports = {
 
 	/* go to end of this word */
 	'/^(e)$/': function(keys,vim) {
-		var doc = vim.curDoc;
+		var doc = this.curDoc;
 		var point = doc.find(/(\w)(?= |$)/g);
 		if(point) { //there is a space, therefore a word
 			doc.cursor.line(point.line);
@@ -5825,8 +5863,8 @@ module.exports = {
 
 	/* go to first non-whitespace character of this line */
 	'/\\^/': function(keys,vim) {
-		vim.exec('0');
-		var doc = vim.curDoc;
+		this.exec('0');
+		var doc = this.curDoc;
 		var point = doc.find(/(\S)/g);
 		if(point) {
 			doc.cursor.line(point.line);
@@ -5840,31 +5878,31 @@ module.exports = {
 	/* Basic movement */
 
 	'/^h$/': function(keys,vim) {
-		var newChar = vim.cursor().char()-1;
+		var newChar = this.cursor().char()-1;
 		if(newChar < 0) return;
-		vim.cursor().char(newChar);
+		this.cursor().char(newChar);
 	},
 
 	'/^l$/': function(keys,vim) {
-		var newChar = vim.cursor().char()+1;
-		if(newChar >= vim.curDoc.line().length) return;
-		vim.cursor().char(newChar);
+		var newChar = this.cursor().char()+1;
+		if(newChar >= this.curDoc.line().length) return;
+		this.cursor().char(newChar);
 	},
 
 	'/^j$/': function(keys, vim) {
-		var newLine = vim.cursor().line()+1;
-		if(newLine >= vim.curDoc._lines.length) return;
-		vim.cursor().line(newLine);
+		var newLine = this.cursor().line()+1;
+		if(newLine >= this.curDoc._lines.length) return;
+		this.cursor().line(newLine);
 	},
 
 	'/^k$/': function(keys, vim) {
-		var newLine = vim.cursor().line()-1;
+		var newLine = this.cursor().line()-1;
 		if(newLine < 0) return;
-		vim.cursor().line(newLine);
+		this.cursor().line(newLine);
 	},
 
 	'/^([1-9]+[0-9]*)$/': function(keys, vim, res) {
-		vim.keyBuffer += keys;
+		this.keyBuffer += keys;
 	},
 
 	/* Go to line */
@@ -5874,20 +5912,20 @@ module.exports = {
 		var lineNumber = parseInt(res[1])-1;
 
 		//Move line
-		vim.curDoc.cursor.line(lineNumber);
+		this.curDoc.cursor.line(lineNumber);
 
 		//Go to the beginning
-		vim.exec('0');
+		this.exec('0');
 	},
 
 	/* go to first line */
 	'/^gg$/': function(keys,vim,res) {
-		vim.exec('1G');
+		this.exec('1G');
 	},
 
 	/* go to last line */
 	'/^G$/': function(keys,vim,res) {
-		vim.exec('' + vim.curDoc._lines.length + 'G');
+		this.exec('' + this.curDoc._lines.length + 'G');
 	},
 
 
@@ -5949,38 +5987,38 @@ module.exports = {
 
 	'/(\\/|\\?)(.+)\\n/': function(keys,vim,match) {
 
-		vim.curDoc.last('search',keys)
+		this.curDoc.last('search',keys)
 
-		vim.searchMode = match[1] === '/' ? 'forwards' : 'backwards';
+		this.searchMode = match[1] === '/' ? 'forwards' : 'backwards';
 		//var term = match[2].replace(/(\(|\))/,'\\$1');
-		vim.searchBuffer = match[2];
-		var pt = vim.curDoc.find(new RegExp('(' + vim.searchBuffer.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&") + ')','g'),{selection: true, backwards: vim.searchMode==='backwards'});
+		this.searchBuffer = match[2];
+		var pt = this.curDoc.find(new RegExp('(' + this.searchBuffer.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&") + ')','g'),{selection: true, backwards: vim.searchMode==='backwards'});
 		if(pt) {
-			vim.cursor().line(pt.line);
-			vim.cursor().char(pt.char);
+			this.cursor().line(pt.line);
+			this.cursor().char(pt.char);
 		}
 	},
 
 	/*'/^(\\/)/': function(keys,vim) {
-		vim.searchMode = 'forward';
-		vim.keyBuffer = '';
-		vim.mode('search');
+		this.searchMode = 'forward';
+		this.keyBuffer = '';
+		this.mode('search');
 	},*/
 
 	'/^n$/': function(keys, vim, res) {
-		vim.exec(vim.curDoc.last('search'));
+		this.exec(this.curDoc.last('search'));
 	},
 
 	'/^N$/': function(keys, vim, res) {
-		var last = vim.curDoc.last('search');
+		var last = this.curDoc.last('search');
 		if(!last) return;
 		if(last.substring(0,1) === '?') {
 			newLast = '/' + last.substring(1);
 		} else {
 			newLast = '?' + last.substring(1);
 		}
-		vim.exec(newLast);
-		vim.curDoc.last('search',last)
+		this.exec(newLast);
+		this.curDoc.last('search',last)
 	},
 
 
@@ -5988,89 +6026,89 @@ module.exports = {
 //MODES
 	
 	'/(esc)/': function(keys, vim) {
-		vim.keyBuffer = ''
+		this.keyBuffer = ''
 	},
 
 //Insert mode
 	'/^(i|s|S)/': function(keys,vim) {
-		//vim.exec('h');
-		if(!vim.curDoc._lines.length) { vim.curDoc._lines.push(''); }
-		vim.mode('insert');
+		//this.exec('h');
+		if(!this.curDoc._lines.length) { this.curDoc._lines.push(''); }
+		this.mode('insert');
 	},
 
 	'/^(A)/': function(keys,vim) {
-		vim.exec('$');
-		vim.exec('a');
+		this.exec('$');
+		this.exec('a');
 	},
 
 	'/^(I)/': function(keys,vim) {
-		vim.exec('0');
-		vim.exec('i');
+		this.exec('0');
+		this.exec('i');
 	},
 
 	'/^v$/': function(keys,vim) {
-		vim.mode('visual');
+		this.mode('visual');
 	},
 	/* join */
 	'/^J$/': function(keys,vim) {
-		vim.exec('j');
-		vim.exec('0');
-		vim.exec('v');
-		vim.exec('$');
-		vim.exec('d');
+		this.exec('j');
+		this.exec('0');
+		this.exec('v');
+		this.exec('$');
+		this.exec('d');
 
 		//Doing this rather than go to greater measures to delete the line.
-		var copied = vim.register(0);
+		var copied = this.register(0);
 		copied = copied.substring(0,copied.length-1);
-		vim.register(0,copied);
+		this.register(0,copied);
 
-		vim.exec('k');
-		vim.exec('$');
-		var position = vim.curDoc.cursor.char();
-		vim.exec('a');
-		vim.exec(' ');
-		vim.exec('esc');
-		vim.exec('p');	
-//		vim.curDoc.cursor.char(position);
-		vim.curDoc.selection('reset');
-		vim.exec('0');
-		vim.exec(position+1 + 'l');
+		this.exec('k');
+		this.exec('$');
+		var position = this.curDoc.cursor.char();
+		this.exec('a');
+		this.exec(' ');
+		this.exec('esc');
+		this.exec('p');	
+//		this.curDoc.cursor.char(position);
+		this.curDoc.selection('reset');
+		this.exec('0');
+		this.exec(position+1 + 'l');
 	},
 
 	'/^o$/': function(keys,vim) {
-		vim.exec('A');
-		vim.exec('\n');
+		this.exec('A');
+		this.exec('\n');
 	},
 
 	'/^O$/': function(keys,vim) {
-		vim.exec('k');
-		vim.exec('i');
-		vim.exec('\n');
+		this.exec('k');
+		this.exec('i');
+		this.exec('\n');
 	},
 	'/^a$/': function(keys,vim) {
-		vim.exec('i');
-		var doc = vim.curDoc;
+		this.exec('i');
+		var doc = this.curDoc;
 		doc.cursor.char(doc.cursor.char()+1);
 	},
 
 	'/^([1-9]+[0-9]*)?(yy|cc|dd)$/': function(keys, vim, match) { //number
 		var start = this.curDoc.cursor.position();
 
-		vim.exec('0');
-		vim.exec('v');
+		this.exec('0');
+		this.exec('v');
 		var ct = 1;
 		var to = parseInt(match[1]);
 		if(!to) to = 1;
 		while(ct < to) {
 			ct++;
-			vim.exec('j');
+			this.exec('j');
 		}
-		vim.exec('$');
+		this.exec('$');
 
 
-		var text = vim.curDoc.getRange(vim.curDoc.selection());
+		var text = this.curDoc.getRange(this.curDoc.selection());
 		if(text.substring(text.length-1) === '\n') text = text.substring(0,text.length-1);
-		vim.curDoc.yanking = false;
+		this.curDoc.yanking = false;
 
 		if(match[2] === 'cc' || match[2] === 'dd') {
 			this.exec('d');
@@ -6090,7 +6128,7 @@ module.exports = {
 		command.push('0');
 
 		this.register(this.currentRegister,command);
-		vim.curDoc.yanking = false;
+		this.curDoc.yanking = false;
 
 	},
 
@@ -6112,22 +6150,22 @@ module.exports = {
 		//Execute arrays as a sequence of commands
 		if(_(reg).isArray()) {
 			while(reg.length) {
-				vim.exec(reg.shift());
+				this.exec(reg.shift());
 			}
-			vim.exec('esc');
+			this.exec('esc');
 		} else {
 			//Otherwise treat as text
-			vim.exec(P ? 'i' : 'a');
-			vim.exec(reg);
-			vim.exec('esc');
+			this.exec(P ? 'i' : 'a');
+			this.exec(reg);
+			this.exec('esc');
 		}
 
 	},
 
 	'/^(P)/': function(keys,vim,res) {
-		vim.exec('i');
-		vim.exec(vim.register(0));
-		vim.exec('esc');
+		this.exec('i');
+		this.exec(this.register(0));
+		this.exec('esc');
 	},
 
 
@@ -6137,35 +6175,35 @@ module.exports = {
 			this.register(this.recordingRegister,this.recordingBuffer);
 			this.recording = false;
 		} else if(res[1]) {
-			vim.recording = true;
-			vim.recordingRegister = res[1]
-			vim.recordingBuffer = [];
-			vim.preRecordText = vim.curDoc.text();
+			this.recording = true;
+			this.recordingRegister = res[1]
+			this.recordingBuffer = [];
+			this.preRecordText = this.curDoc.text();
 		} else {
 			this.keyBuffer = 'q';
 		}
 		//grab the doc in a diff
-		//vim.mode('recording');
+		//this.mode('recording');
 	},
 
 
 	/* End the recording if currently recording */
 	/*'/^q$/': function(keys,vim) {
-		if(vim.recording) {
-			vim.recording = false;
-			vim.curDoc.text(vim.preRecordText);
+		if(this.recording) {
+			this.recording = false;
+			this.curDoc.text(vim.preRecordText);
 		}
 	},*/
 
 	/* Execute the command as stored in the register */
 	'/^@([a-z])$/': function(keys,vim,res) {
-		var commands = vim.register(res[1]);
+		var commands = this.register(res[1]);
 		this.curDoc.last('macro',res[1]);
 		if(typeof commands === 'string') {
-			vim.exec(commands)
+			this.exec(commands)
 		} else {
 			while(commands.length) {
-				vim.exec(commands.shift());
+				this.exec(commands.shift());
 			}
 		}
 	},
@@ -6173,14 +6211,14 @@ module.exports = {
 	'/^@@$/': function() {
 		var last = this.curDoc.last('macro');
 		if(last) {
-			vim.exec('@' + last);
+			this.exec('@' + last);
 		}
 	},
 
 	/*'/([0-9]+)([hHjJkKlLwWbBeE(){}]|yy|dd|\[\[|\]\]|)/': function(keys,vim,result) {
 		var ct = result[1];
 		var command = result[2];
-		while(ct--) vim.exec(command);
+		while(ct--) this.exec(command);
 	}*/
 
 /* REPLACE */
@@ -6193,6 +6231,15 @@ module.exports = {
 	},
 
 /* SHORTCUTS */
+
+
+	/* Commands that can be stupidly executed N times, instead of a smarter visual selection */
+	'/^([1-9]+[0-9]*)(x|X)$/': function(keys, vim, match) {
+		var ct = parseInt(match[1]);
+		while(ct--) {
+			vim.exec(match[2]);
+		}
+	},
 
 	'/^x$/': function(keys, vim, res) {
 		//Using x, don't delete a line if it's empty.
@@ -6208,24 +6255,24 @@ module.exports = {
 		this.exec('d');
 	},
 	'/^X$/': function(keys, vim, res) {
-		vim.exec('h');
-		vim.exec('x');
+		this.exec('h');
+		this.exec('x');
 	},
 	'/^D$/': function(keys, vim, res) {
-		vim.exec('d');
-		vim.exec('$');
+		this.exec('d');
+		this.exec('$');
 	},
 	'/^C$/': function(keys, vim, res) {
-		vim.exec('c');
-		vim.exec('$');
+		this.exec('c');
+		this.exec('$');
 	},
 	'/^s$/': function(keys, vim, res) {
-		vim.exec('c');
-		vim.exec('l');
+		this.exec('c');
+		this.exec('l');
 	},
 	'/^S$/': function(keys, vim, res) {
-		vim.exec('c');
-		vim.exec('c');
+		this.exec('c');
+		this.exec('c');
 	},
 
 	'/^u$/': function(keys, vim, res) {
@@ -6234,5 +6281,5 @@ module.exports = {
 
 }
 
-},{"underscore":14}]},{},[2])
+},{"underscore":16}]},{},[2])
 ;
