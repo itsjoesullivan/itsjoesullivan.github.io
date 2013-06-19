@@ -11,7 +11,6 @@ layout: default
 </head>
 <body>
 	<div class='content'>
-
 		<div class='header'>
 			<div class="menu pure-menu pure-menu-open pure-menu-horizontal">
 						<ul>
@@ -31,7 +30,8 @@ layout: default
 				<div class="pure-menu pure-menu-open">
 						<a class="pure-menu-heading">Projects</a>
 						<ul>
-								<li class="pure-menu-selected"><a href="/projects/js-vim">js-vim</a></li>
+								<li class=" 
+	{% if id == 'js-vim' %} pure-menu-selected {% endif %}"><a href="/projects/js-vim">js-vim</a></li>
 								<li><a href="http://t.elegr.am" target="_blank">t.elegr.am</a></li>
 								<li><a href="https://chrome.google.com/webstore/detail/chide/akffdfncndkbojhjphnljmlholpkmhgi" target="_blank">ChIDE</a></li>
 						</ul>
