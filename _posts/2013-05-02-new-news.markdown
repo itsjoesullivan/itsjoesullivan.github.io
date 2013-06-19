@@ -1,3 +1,7 @@
+---
+layout: default
+title: The New News
+---
 One of the most interesting things going on with my feed is the expanding relationship between publishers and social media. Long story short, I believe that we’re moving from a phase in which social strategy amounts to optimizing social media to one in which the content of publication itself is optimized by social media. The crucial difference is the shift in emphasis from tacking on social media, however effectively, to integrating social feedback into the curation loop.
 The upshot, so far, has been well encapsulated by BuzzFeed. Its CEO <a href="http://adage.com/article/special-report-digital-conference/buzzfeed-ceo-social-marketers-tap-emotional-intelligence/234205/">describes</a> its strategy as: “If I saw this on my Facebook wall would I click it?” The result is eminently clickable content that falls short of nourishment. The cliché has become: socially-oriented content tends to consist of photos of kittens.
 So my ears perked up when I saw <a href="http://gawker.com/5994400/boss-writes-memo">this memo</a> by Gawker Media CEO Nick Denton:
