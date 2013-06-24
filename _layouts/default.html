@@ -5,10 +5,12 @@ layout: default
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <head>
-	<title>{{ page.id }}</title>
-  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.2.0/pure-min.css">
-  <link rel="stylesheet" href="/style.css">
+	<title>joesul.li/van | {{ page.id }}</title>
+  <link rel="stylesheet" href="/css/pure-min.css">
+  <link rel="stylesheet" href="/css/style.css">
 	<script type="text/javascript" src="//use.typekit.net/vej1mbp.js"></script>
+	<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+	<script type="text/javascript" src="//use.typekit.net/ptb0xtz.js"></script>
 	<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
 </head>
 <body>
@@ -22,7 +24,7 @@ layout: default
 							<li><a href="https://docs.google.com/document/d/1JE7qJlVuqk2dbld0YrL1YC-igMFYJwon7iIsEujNJ9Q" target="_blank">resume</a></li>
 					</ul>
 			</div>
-		<h1 class='tk-futura-pt'>JOE SULLIVAN</h1>
+		<a href='/'><h1>Joe Sullivan</h1></a>
 		<h2 class=''>web developer</h2>
 		</div>
 		
@@ -31,8 +33,8 @@ layout: default
 	<div class="pure-u-1-4">
 				<div class="pure-menu pure-menu-open">
 						<a class="pure-menu-heading">Projects</a>
-						<ul>
-								<li class="{% if id == 'js-vim' %} pure-menu-selected {% endif %}"><a href="/projects/js-vim">js-vim</a></li>
+						<ul>{{ page.name }}
+								<li class="{% if page.title == 'js-vim' %} pure-menu-selected {% endif %}"><a href="/project/js-vim">js-vim</a></li>
 								<li><a href="http://t.elegr.am" target="_blank">t.elegr.am</a></li>
 								<li><a href="https://chrome.google.com/webstore/detail/chide/akffdfncndkbojhjphnljmlholpkmhgi" target="_blank">ChIDE</a></li>
 						</ul>
