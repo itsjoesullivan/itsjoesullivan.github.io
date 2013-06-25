@@ -6,7 +6,7 @@ layout: default
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <head>
 	<title>joesul.li/van | {{ page.id }}</title>
-  <link rel="stylesheet" href="/css/pure-min.css">
+  <link rel="stylesheet" href="http://localhost:8081/index.css">
   <link rel="stylesheet" href="/css/style.css">
 	<script type="text/javascript" src="//use.typekit.net/vej1mbp.js"></script>
 	<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
@@ -14,41 +14,40 @@ layout: default
 	<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
 </head>
 <body>
-	<div class='content'>
+	<div class='content w80'>
 		<div class='header'>
-			<div class="menu pure-menu pure-menu-open pure-menu-horizontal">
 						<ul>
 							<li><a target="_blank" href="mailto:itsjoesullivan@gmail.com">itsjoesullivan@gmail.com</a></li>
 							<li><a target="_blank "href="https://twitter.com/itsjoesullivan">@itsjoesullivan</a></li>
 							<li><a target="_blank" href="http://www.linkedin.com/profile/view?id=84972619">linkedIn</a></li>
 							<li><a href="https://docs.google.com/document/d/1JE7qJlVuqk2dbld0YrL1YC-igMFYJwon7iIsEujNJ9Q" target="_blank">resume</a></li>
 					</ul>
-			</div>
+
 		<a href='/'><h1>Joe Sullivan</h1></a>
 		<h2 class=''>web developer</h2>
 		</div>
 		
+<div class="grid">
+<div class="w20">
+<ul class="menu">
+	<li><a href="/project/js-vim">js-vim</a></li>
+	<li><a href="/project/flat-css">flat.css</a></li>
+	<li><a href="/project/telegram">telegram</a></li>
+	<li><a href="/project/ChIDE">ChIDE</a></li>
+	<li><a href="/project/spoke-js">spoke.js</a></li>
+	<li><a href="/project/addthis">AddThis</a></li>
+</ul>
+</div>
 
-<div class="pure-g main">
-	<div class="pure-u-1-4">
-				<div class="pure-menu pure-menu-open">
-						<a class="pure-menu-heading">Projects</a>
-						<ul>{{ page.name }}
-								<li class="{% if page.title == 'js-vim' %} pure-menu-selected {% endif %}"><a href="/project/js-vim">js-vim</a></li>
-								<li><a href="http://t.elegr.am" target="_blank">t.elegr.am</a></li>
-								<li><a href="https://chrome.google.com/webstore/detail/chide/akffdfncndkbojhjphnljmlholpkmhgi" target="_blank">ChIDE</a></li>
-						</ul>
-					<a class="pure-menu-heading">Writing</a>
-						<ul>
-								<li class=""><a href="#">iOS7: Designing scarcity</a></li>
-								<li><a href="#">The New News</a></li>
-						</ul>
-
-				</div>
-	</div>
-	<div class="pure-u-5-8 content">
+<div class="w80">
+	<div class="buffer">
 		{{ content }}
 	</div>
+</div>
+
+</div>
+
+
 </div>
 </body>
 </html>
