@@ -3,6 +3,13 @@ layout: post
 title: leppard
 category: project
 ---
+<!doctype html>
+<html>
+<head>
+	<link rel='stylesheet' href='http://itsjoesullivan.github.io/flat.css/flat.css' />
+</head>
+<body style="margin-bottom: 60px">
+<div class="content w60">
 
 <h1>Leppard</h1>
 <hr>
@@ -79,3 +86,9 @@ A full 60% of the screen controls what's playing.
 <a target="_blank" href="https://chrome.google.com/webstore/detail/leppard/elinjnnjbogbjikhnkebppfedankbdkk"><img src='/img/leppard.png' style="width:100%" /></a>
 
 The upshot is <a target="_blank" href="https://chrome.google.com/webstore/detail/leppard/elinjnnjbogbjikhnkebppfedankbdkk">Leppard</a>, a Chrome extension that provides an alternate view of Spotify playlists. If you use __play.spotify__ just click the leppard icon in the address bar to toggle between the normal view and the leppard view.
+
+
+
+</div>
+</body>
+</html>
