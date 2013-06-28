@@ -3,14 +3,6 @@ layout: post
 title: leppard
 category: project
 ---
-<!doctype html>
-<html>
-<head>
-	<link rel='stylesheet' href='http://itsjoesullivan.github.io/flat.css/flat.css' />
-</head>
-<body style="margin-bottom: 60px">
-<div class="content w60">
-
 <h1>Leppard</h1>
 <hr>
 
@@ -89,7 +81,6 @@ The upshot is <a target="_blank" href="https://chrome.google.com/webstore/detail
 
 Why not <a target="_blank" href="https://chrome.google.com/webstore/detail/leppard/elinjnnjbogbjikhnkebppfedankbdkk"><button>install</button></a> it?
 
-<!-- AddThis Button BEGIN -->
 <div class="addthis_toolbox addthis_default_style ">
 <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
 <a class="addthis_button_tweet"></a>
@@ -97,9 +88,4 @@ Why not <a target="_blank" href="https://chrome.google.com/webstore/detail/leppa
 </div>
 <script type="text/javascript">var addthis_config = {"data_track_addressbar":true};</script>
 <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-50c9eb264657aaed"></script>
-<!-- AddThis Button END -->
 
-
-</div>
-</body>
-</html>
