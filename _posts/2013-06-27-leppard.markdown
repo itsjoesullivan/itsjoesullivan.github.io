@@ -87,6 +87,17 @@ A full 60% of the screen controls what's playing.
 
 The upshot is <a target="_blank" href="https://chrome.google.com/webstore/detail/leppard/elinjnnjbogbjikhnkebppfedankbdkk">Leppard</a>, a Chrome extension that provides an alternate view of Spotify playlists. If you use __play.spotify__ just click the leppard icon in the address bar to toggle between the normal view and the leppard view.
 
+Why not <a target="_blank" href="https://chrome.google.com/webstore/detail/leppard/elinjnnjbogbjikhnkebppfedankbdkk"><button>install</button></a> it?
+
+<!-- AddThis Button BEGIN -->
+<div class="addthis_toolbox addthis_default_style ">
+<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+<a class="addthis_button_tweet"></a>
+<a class="addthis_counter addthis_pill_style"></a>
+</div>
+<script type="text/javascript">var addthis_config = {"data_track_addressbar":true};</script>
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-50c9eb264657aaed"></script>
+<!-- AddThis Button END -->
 
 
 </div>
