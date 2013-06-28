@@ -71,7 +71,7 @@ And of course it's not just Spotify. Check out Rdio:
 
 <img src="/img/rdio.png" style="width:100%" />
 
-Less than 1% of the screen controls what I hear.
+Less than 1% of the screen controls what I hear.  
 
 And this isn't just the difference between hardware and software. Compare to the iTunes UI, arguably the incumbent: 
 
