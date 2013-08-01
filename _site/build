@@ -1,0 +1,13 @@
+#!/usr/local/bin/node
+
+var ghm = require('github-flavored-markdown');
+var fs = require('fs');
+var index = fs.readFileSync(__dirname + '/index.markdown','binary');
+
+var after = ghm.parse(index);
+
+console.log(after);
+
+
+
+//fs.writeFileSync('

@@ -1,5 +1,6 @@
 ---
 layout: default
+id: asdf
 ---
 <div class="manifesto">
 <h1>About me</h1>
